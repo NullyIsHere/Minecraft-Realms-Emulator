@@ -1,10 +1,12 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List, Any
 from datetime import datetime
 from app.models.enums import GamemodeEnum, DifficultyEnum, StateEnum
 
 
 class PlayerResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     Id: int
     Name: str
     Uuid: str
@@ -13,11 +15,10 @@ class PlayerResponse(BaseModel):
     Online: bool
     Permission: str
 
-    class Config:
-        from_attributes = True
-
 
 class SlotResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     Id: int
     SlotId: int
     SlotName: str
@@ -28,11 +29,10 @@ class SlotResponse(BaseModel):
     SpawnProtection: int
     Hardcore: bool
 
-    class Config:
-        from_attributes = True
-
 
 class WorldResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     Id: int
     Owner: Optional[str]
     OwnerUUID: Optional[str]
@@ -60,15 +60,14 @@ class WorldResponse(BaseModel):
     State: str
     Players: List[PlayerResponse] = []
 
-    class Config:
-        from_attributes = True
-
 
 class ServersResponse(BaseModel):
     servers: List[WorldResponse]
 
 
 class BackupResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     Id: int
     BackupId: str
     LastModifiedDate: datetime
@@ -78,22 +77,18 @@ class BackupResponse(BaseModel):
     ResourcePackUrl: Optional[str] = None
     ResourcePackHash: Optional[str] = None
 
-    class Config:
-        from_attributes = True
-
 
 class BackupsResponse(BaseModel):
     backups: List[BackupResponse]
 
 
 class SubscriptionResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     Id: int
     StartDate: datetime
     SubscriptionType: str
     DaysLeft: int
-    
-    class Config:
-        from_attributes = True
 
 
 class ConnectionResponse(BaseModel):

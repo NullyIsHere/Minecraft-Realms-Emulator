@@ -73,7 +73,15 @@ async def get_stable_worlds(
     # Process owned worlds
     for world in owned_worlds:
         active_version = world.ActiveSlot.Version if world.ActiveSlot else game_version
-        versions_compared = MinecraftVersion(game_version)._compare_to(MinecraftVersion(active_version))
+        game_ver = MinecraftVersion(game_version)
+        active_ver = MinecraftVersion(active_version)
+        
+        if game_ver == active_ver:
+            versions_compared = 0
+        elif game_ver < active_ver:
+            versions_compared = -1
+        else:
+            versions_compared = 1
         
         is_compatible = (
             CompatibilityEnum.COMPATIBLE.value if versions_compared == 0 else
@@ -97,7 +105,7 @@ async def get_stable_worlds(
             MaxPlayers=world.MaxPlayers,
             ActiveSlot=world.ActiveSlot.SlotId if world.ActiveSlot else 1,
             Member=world.Member,
-            Players=[PlayerResponse.from_orm(p) for p in world.Players],
+            Players=[PlayerResponse.model_validate(p) for p in world.Players],
             ActiveVersion=active_version,
             Compatibility=is_compatible
         )
@@ -120,9 +128,15 @@ async def get_stable_worlds(
         if not world.ActiveSlot or not world.Subscription:
             continue
         
-        versions_compared = MinecraftVersion(game_version)._compare_to(
-            MinecraftVersion(world.ActiveSlot.Version)
-        )
+        game_ver = MinecraftVersion(game_version)
+        active_ver = MinecraftVersion(world.ActiveSlot.Version)
+        
+        if game_ver == active_ver:
+            versions_compared = 0
+        elif game_ver < active_ver:
+            versions_compared = -1
+        else:
+            versions_compared = 1
         is_compatible = (
             CompatibilityEnum.COMPATIBLE.value if versions_compared == 0 else
             CompatibilityEnum.NEEDS_DOWNGRADE.value if versions_compared < 0 else
@@ -145,7 +159,7 @@ async def get_stable_worlds(
             MaxPlayers=world.MaxPlayers,
             ActiveSlot=world.ActiveSlot.SlotId,
             Member=True,
-            Players=[PlayerResponse.from_orm(p) for p in world.Players],
+            Players=[PlayerResponse.model_validate(p) for p in world.Players],
             DaysLeft=0,
             Expired=(world.Subscription.StartDate + timedelta(days=30) - datetime.now()).days < 0,
             ExpiredTrial=False,
@@ -183,7 +197,15 @@ async def get_world(
     
     game_version = player_info["version"]
     active_version = world.ActiveSlot.Version if world.ActiveSlot else game_version
-    versions_compared = MinecraftVersion(game_version)._compare_to(MinecraftVersion(active_version))
+    game_ver = MinecraftVersion(game_version)
+    active_ver = MinecraftVersion(active_version)
+    
+    if game_ver == active_ver:
+        versions_compared = 0
+    elif game_ver < active_ver:
+        versions_compared = -1
+    else:
+        versions_compared = 1
     
     is_compatible = (
         CompatibilityEnum.COMPATIBLE.value if versions_compared == 0 else
@@ -207,7 +229,7 @@ async def get_world(
         MaxPlayers=world.MaxPlayers,
         ActiveSlot=world.ActiveSlot.SlotId if world.ActiveSlot else 1,
         Member=world.Member,
-        Players=[PlayerResponse.from_orm(p) for p in world.Players],
+        Players=[PlayerResponse.model_validate(p) for p in world.Players],
         ActiveVersion=active_version,
         Compatibility=is_compatible
     )

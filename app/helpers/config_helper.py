@@ -36,7 +36,11 @@ class ConfigHelper:
         # Load all settings into cache
         all_settings = db.query(Configuration).all()
         for setting in all_settings:
-            cls._config_cache[setting.Key] = json.loads(setting.Value) if isinstance(setting.Value, str) else setting.Value
+            try:
+                cls._config_cache[setting.Key] = json.loads(setting.Value) if isinstance(setting.Value, str) else setting.Value
+            except (json.JSONDecodeError, TypeError):
+                # If JSON parsing fails, store the raw value
+                cls._config_cache[setting.Key] = setting.Value
     
     @classmethod
     def get_config(cls) -> Dict[str, Any]:

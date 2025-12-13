@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, JSON, Text
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, JSON, Text, func
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime
@@ -39,7 +39,7 @@ class Subscription(Base):
 
     Id = Column(Integer, primary_key=True, index=True)
     WorldId = Column(Integer, ForeignKey("Worlds.Id"))
-    StartDate = Column(DateTime, default=datetime.utcnow)
+    StartDate = Column(DateTime, server_default=func.now())
     SubscriptionType = Column(String, nullable=False)
 
     # Relationships
@@ -87,7 +87,7 @@ class Backup(Base):
     Id = Column(Integer, primary_key=True, index=True)
     SlotId = Column(Integer, ForeignKey("Slots.Id"), nullable=False)
     BackupId = Column(String, nullable=False)
-    LastModifiedDate = Column(DateTime, default=datetime.utcnow)
+    LastModifiedDate = Column(DateTime, server_default=func.now())
     Size = Column(Integer, default=0)
     Metadata = Column(JSONB, nullable=False)
     DownloadUrl = Column(String, nullable=False)
@@ -105,7 +105,7 @@ class Invite(Base):
     InvitationId = Column(String, nullable=False)
     RecipientUuid = Column(String, nullable=False)
     WorldId = Column(Integer, ForeignKey("Worlds.Id"), nullable=False)
-    Date = Column(DateTime, default=datetime.utcnow)
+    Date = Column(DateTime, server_default=func.now())
 
     # Relationships
     World = relationship("World")

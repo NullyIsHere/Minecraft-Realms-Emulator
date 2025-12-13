@@ -44,6 +44,9 @@ class MinecraftVersion:
     def __eq__(self, other: 'MinecraftVersion') -> bool:
         return self._compare_to(other) == 0
     
+    def __ne__(self, other: 'MinecraftVersion') -> bool:
+        return self._compare_to(other) != 0
+    
     def _compare_to(self, other: 'MinecraftVersion') -> int:
         if other is None:
             return 1

@@ -1,6 +1,7 @@
 import os
 import sys
 import subprocess
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -16,26 +17,11 @@ if not os.getenv("CONNECTION_STRING"):
     print("CONNECTION_STRING environment variable missing")
     sys.exit(1)
 
-# Create FastAPI app
-app = FastAPI(
-    title="Minecraft Realms Emulator",
-    description="Custom implementation of a Minecraft Realms server for Java Edition",
-    version="1.0.0"
-)
 
-# Configure CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5192"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Initialize database
-@app.on_event("startup")
-async def startup_event():
-    """Initialize the application on startup"""
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Initialize the application on startup and cleanup on shutdown"""
+    # Startup
     # Create all tables
     Base.metadata.create_all(bind=engine)
     
@@ -62,7 +48,28 @@ async def startup_event():
         sys.exit(1)
     
     print("Running Minecraft Realms Emulator")
+    
+    yield  # Application runs here
+    
+    # Shutdown (cleanup if needed)
 
+
+# Create FastAPI app with lifespan
+app = FastAPI(
+    title="Minecraft Realms Emulator",
+    description="Custom implementation of a Minecraft Realms server for Java Edition",
+    version="1.0.0",
+    lifespan=lifespan
+)
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5192"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Import and include routers
 from app.controllers import worlds, activities, invites, mco, notifications

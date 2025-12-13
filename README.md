@@ -1,16 +1,21 @@
 # Minecraft Realms Emulator
 
-This is a custom implementation of a Minecraft Realms server for Java Edition,
-written in C#.
+This is a custom implementation of a Minecraft Realms server for Java Edition.
 
-# Requirements
+**🚀 Now Available in Two Versions:**
+- **C# (ASP.NET Core)** - Original implementation (see instructions below)
+- **Python (FastAPI)** - New Python port (see [README_PYTHON.md](README_PYTHON.md))
+
+# Requirements (C# Version)
 
 - .NET SDK (version 8.0 or higher)
 - Minecraft Java Edition
 - PostgreSQL (for database support)
 - Docker (for `REALMS` mode to work)
 
-# Installation
+**For Python version requirements, see [README_PYTHON.md](README_PYTHON.md)**
+
+# Installation (C# Version)
 
 Clone the repository:
 
